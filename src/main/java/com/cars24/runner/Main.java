@@ -14,6 +14,7 @@ import java.sql.SQLException;
 import java.util.Scanner;
 
 import static com.cars24.util.DbUtil.getDbconnection;
+import static com.cars24.util.DbUtil.closeConnection;
 
 
 public class Main {
@@ -42,7 +43,10 @@ public class Main {
                     break;
                 case 0:
                     exit=false;
+
             }
         }
+        scanner.close();
+        closeConnection();
     }
 }
