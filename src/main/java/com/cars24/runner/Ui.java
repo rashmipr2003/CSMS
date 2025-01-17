@@ -6,12 +6,19 @@ import com.cars24.data.request.DeleteCustomerRequest;
 import com.cars24.data.request.UpdateCustomerRequest;
 import com.cars24.data.response.CustomerProfileResponse;
 import com.cars24.services.impl.CustomerServiceImpl;
+import com.cars24.validation.CustomerValidation;
 
+import java.util.List;
 import java.util.Scanner;
 
 public class Ui {
     private static Scanner scanner  = new Scanner(System.in);
     private static CustomerServiceImpl customerService = new CustomerServiceImpl();
+    private static CustomerValidation customerValidation;
+
+    static {
+        customerValidation = new CustomerValidation();
+    }
     public static void addCustomer()
     {
         System.out.println("Enter customer details");
@@ -29,7 +36,17 @@ public class Ui {
         System.out.println("Enter address:");
         addCustomerReq.setAddress(scanner.next());
 
-        String res=customerService.registerCustomer(addCustomerReq);
+        List<String> validationErrors = customerValidation.validateAddCustomerRequest(addCustomerReq);
+
+        if (!validationErrors.isEmpty()) {
+
+            for (String error : validationErrors) {
+                System.out.println("Error: " + error);
+            }
+            return;
+        }
+
+        String res = customerService.registerCustomer(addCustomerReq);
         System.out.println(res);
 
     }
@@ -54,7 +71,7 @@ public class Ui {
     public static void updateCustomer() {
         UpdateCustomerRequest updateCustomerRequest = new UpdateCustomerRequest();
 
-        // Collect inputs
+
         System.out.println("Enter the customer's name:");
         String name = scanner.nextLine();
         updateCustomerRequest.setName(name);
@@ -72,7 +89,16 @@ public class Ui {
         String address = scanner.nextLine();
         updateCustomerRequest.setAddress(address.isEmpty() ? null : address);
 
-        // Call the service method and display the result
+        List<String> validationErrors = customerValidation.validateUpdateCustomerRequest(updateCustomerRequest);
+
+        if (!validationErrors.isEmpty()) {
+
+            for (String error : validationErrors) {
+                System.out.println("Error: " + error);
+            }
+            return;
+        }
+
         String result = customerService.updateCustomerProfile(updateCustomerRequest);
         System.out.println(result);
 
@@ -91,7 +117,17 @@ public class Ui {
         String email=scanner.nextLine();
         deleteCustomerRequest.setEmail(email);
 
-        String result=customerService.deleteCustomerProfile(deleteCustomerRequest);
+        List<String> validationErrors = customerValidation.validateDeleteCustomerRequest(deleteCustomerRequest);
+
+        if (!validationErrors.isEmpty()) {
+
+            for (String error : validationErrors) {
+                System.out.println("Error: " + error);
+            }
+            return;
+        }
+
+        String result = customerService.deleteCustomerProfile(deleteCustomerRequest);
         System.out.println(result);
     }
 }
