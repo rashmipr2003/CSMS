@@ -24,4 +24,14 @@ public class DbUtil {
 
         return dbconnection;
     }
+    public static void closeConnection() {
+        if (dbconnection != null) {
+            try {
+                dbconnection.close();
+                System.out.println("Database connection closed.");
+            } catch (SQLException e) {
+                System.err.println("Error while closing connection: " + e.getMessage());
+            }
+        }
+    }
 }
